@@ -1,13 +1,9 @@
 package com.fiap.yummyEco.controller;
-
+import static org.springframework.http.HttpStatus.CREATED;
+import static org.springframework.http.HttpStatus.NO_CONTENT;
 import java.util.List;
-import java.util.Optional;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,11 +19,12 @@ import org.springframework.web.server.ResponseStatusException;
 import com.fiap.yummyEco.model.Prato;
 import com.fiap.yummyEco.repository.PratoRepository;
 
+import lombok.extern.slf4j.Slf4j;
+
 @RestController
 @RequestMapping("prato")
+@Slf4j
 public class PratoController {
-
-    Logger log = LoggerFactory.getLogger(getClass());
 
     @Autowired
     PratoRepository pratoRepository;
@@ -38,11 +35,10 @@ public class PratoController {
     }
 
     @PostMapping
-    @ResponseStatus(code = HttpStatus.CREATED)
+    @ResponseStatus(CREATED)
     public Prato create(@RequestBody Prato prato) {
         log.info("cadastrando prato: {}", prato);
-        pratoRepository.save(prato);
-        return prato;
+        return pratoRepository.save(prato);
     }
 
     @GetMapping("{id}")
@@ -55,25 +51,23 @@ public class PratoController {
 
 
     @DeleteMapping("{id}")
-    public ResponseEntity<Object> destroy(@PathVariable Long id) {
+    @ResponseStatus(NO_CONTENT)
+    public void destroy(@PathVariable Long id) {
         log.info("apagando prato {}", id);
 
-        verificarSeExistePrato(id);
-
+        verificarSeExistePrato(id);        
         pratoRepository.deleteById(id);
-        return ResponseEntity.noContent().build();
 
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<Object> update(@PathVariable Long id, @RequestBody Prato prato){
+    public Prato update(@PathVariable Long id, @RequestBody Prato prato){
         log.info("atualizando prato id {} para {}", id, prato);
         
         verificarSeExistePrato(id);
 
         prato.setId(id);
-        pratoRepository.save(prato);
-        return ResponseEntity.ok(prato);
+        return pratoRepository.save(prato);
     }
 
     private void verificarSeExistePrato(Long id) {
