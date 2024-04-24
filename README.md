@@ -1,4 +1,4 @@
-# MoneyMinder
+# YummyEco
 
 ## Requisitos
 
